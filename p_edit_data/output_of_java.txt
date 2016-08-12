@@ -1,0 +1,3 @@
+New Entry:
+ID: 1022 Name: Zaman Email: zaman@mail.com Phone: 01545412
+ORA-00001: unique constraint (MOVIE.SYS_C007563) violated

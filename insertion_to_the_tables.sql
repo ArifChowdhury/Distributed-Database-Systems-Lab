@@ -23,6 +23,19 @@ INSERT INTO CUSTOMERS (customerId, name, emailId, phone) VALUES (3, 'Iqbal', 'iq
 INSERT INTO CUSTOMERS (customerId, name, emailId, phone) VALUES (4, 'Shadhin', 'shadhin@gmail.com', '01700111114');
 INSERT INTO CUSTOMERS (customerId, name, emailId, phone) VALUES (5, 'Rasel', 'rasel@gmail.com', '01700111115');
 
+TRUNCATE TABLE CUSTOMERS;
+INSERT INTO CUSTOMERS (customerId, name, emailId, phone) VALUES (SEQ_CUSTOMERS_ID.NEXTVAL, 'Arifuzzaman', 'auzchowdhury@gmail.com', '01557446802');
+INSERT INTO CUSTOMERS (customerId, name, emailId, phone) VALUES (SEQ_CUSTOMERS_ID.NEXTVAL, 'ShuvoJit', 'ShuvoJit@gmail.com', '0175444117');
+INSERT INTO CUSTOMERS (customerId, name, emailId, phone) VALUES (SEQ_CUSTOMERS_ID.NEXTVAL, 'IqbalRocky', 'IqbalRocky@gmail.com', '01254154544');
+
+--|| Did not work ||--
+INSERT ALL
+   INTO CUSTOMERS (customerId, name, emailId, phone) VALUES (SEQ_CUSTOMERS_ID.NEXTVAL, 'Arifuzzaman', 'auzchowdhury@gmail.com', '01557446802')
+   INTO CUSTOMERS (customerId, name, emailId, phone) VALUES (SEQ_CUSTOMERS_ID.NEXTVAL, 'ShuvoJit', 'ShuvoJit@gmail.com', '0175444117')
+   INTO CUSTOMERS (customerId, name, emailId, phone) VALUES (SEQ_CUSTOMERS_ID.NEXTVAL, 'IqbalRocky', 'IqbalRocky@gmail.com', '01254154544')
+SELECT 1 FROM DUAL;
+
+
 --MOVIES_IN_THEATER
 INSERT INTO MOVIES_IN_THEATER(movieId, premereDate, now_playing) VALUES (1, '21-JUL-2016', 1);
 INSERT INTO MOVIES_IN_THEATER(movieId, premereDate, now_playing) VALUES (2, '24-JUL-2016', 1);
