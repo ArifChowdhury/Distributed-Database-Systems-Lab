@@ -1,0 +1,34 @@
+
+########<The Godfather> :: <04-08-16>########
+
+ORA-20001: The date inserted is not in the correct format. The correct format is 'DD-MON-YY' e.g. '30-JUL-16'.
+
+########<The Godfather> :: <04-AUG-16>########
+
+Movie name || Date || Hall-no || Showtime || Format
+The Godfather || 04-AUG-16 || 5 || 11:00 AM || 2D
+The Godfather || 04-AUG-16 || 1 || 11:10 AM || 3D
+The Godfather || 04-AUG-16 || 5 || 12:55 PM || 2D
+The Godfather || 04-AUG-16 || 5 || 03:05 PM || 2D
+The Godfather || 04-AUG-16 || 5 || 05:00 PM || 2D
+The Godfather || 04-AUG-16 || 1 || 07:30 PM || 3D
+The Godfather || 04-AUG-16 || 5 || 07:30 PM || 2D
+
+########<The Godfather> :: <04-AUG-16> : <3>########
+
+Movie name || Date || Hall-no || Showtime 
+The Godfather || 04-AUG-16 || 1 || 11:10 AM
+The Godfather || 04-AUG-16 || 1 || 07:30 PM
+
+########Showing the movies list with schedule for the date: 04-08-16########
+
+ORA-20001: The date inserted is not in the correct format. The correct format is 'DD-MON-YY' e.g. '30-JUL-16'.
+
+########Showing the movies list with schedule for the date: 30-JUL-16########
+
+Date || Movie name || Hall-no || Showtime || Format
+
+30-JUL-16 || Zootopia(2016) || 3 || 11:07 AM || 3D
+30-JUL-16 || Captain America: Civil War || 2 || 02:07 PM || 2D
+30-JUL-16 || The Conjuring 2 || 1 || 05:07 PM || 2D
+30-JUL-16 || Captain America: Civil War || 4 || 05:07 PM || 2D

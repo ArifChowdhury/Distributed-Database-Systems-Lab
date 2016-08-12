@@ -12,8 +12,36 @@ public class Sample_for_package_get_schedule {
 	public static void get_schedule() {
 		get_schedule_for_single_movie("The Godfather", "04-08-16");//<-- Should print an error message because the date format is not correct.
 		get_schedule_for_single_movie("The Godfather", "04-AUG-16");
+		get_schedule_for_single_movie_n_format("The Godfather", "04-AUG-16", 3);
 		get_schedule_for_date("04-08-16");//<-- Should print an error message because the date format is not correct.
-		get_schedule_for_date("04-AUG-16");
+		get_schedule_for_date("30-JUL-16");
+	}
+
+	private static void get_schedule_for_single_movie_n_format(String movieName,
+			String date, int format) {
+		System.out.println("\n########<"+movieName+"> :: <"+date+"> : <"+format+">########\n");
+		try{
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			Connection conn = DriverManager.getConnection ("jdbc:oracle:thin:@localhost:1521:xe", "MOVIE","MOVIE");
+			CallableStatement call = null;
+			call = conn.prepareCall ("{ call P_GET_SCHEDULE.FOR_MOVIE('"+movieName+"', '"+date+"', "+format+", ?)}");
+			call.registerOutParameter (1, OracleTypes.CURSOR);
+			call.execute ();
+			ResultSet rs = (ResultSet)call.getObject (1);
+			System.out.println("Movie name || Date || Hall-no || Showtime ");
+			while (rs.next()) {
+				System.out.println(movieName+" || "+ date+" || "+rs.getString("HALLNO")+" || "+rs.getString("SHOWTIME"));
+			}
+			rs.close();
+			call.close();
+			conn.close();
+
+		}catch (SQLException e) {
+			printSQLERRM(e);
+		}catch (Exception e) {
+			System.out.println(e.getLocalizedMessage());
+		}
+
 	}
 
 	private static void get_schedule_for_date(String date_input) {
