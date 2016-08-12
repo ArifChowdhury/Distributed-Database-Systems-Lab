@@ -6,6 +6,7 @@ Name: The Godfather		R	Genre: 2
 Realease Date: 1972-03-24 	Duration: 175 mins
 Trailer ID: sY1S34973zA		Poster: god_father.jpg
 Summary: The early life and career of Vito Corleone in 1920s New York is portrayed while his son, Michael, expands and tightens his grip on his crime syndicate stretching from Lake Tahoe, Nevada to pre-revolution 1958 Cuba.
+Status: 0
 
 ############ <04-MAR-16>, release-date ###########
 
@@ -14,6 +15,7 @@ Name: Zootopia(2016)		PG	Genre: 3
 Realease Date: 2016-03-04 	Duration: 108 mins
 Trailer ID: lvEzTjuM81A		Poster: zootopia.jpg
 Summary: In a city of anthropomorphic animals, a rookie bunny cop and a cynical con artist fox must work together to uncover a conspiracy.
+Status: 1
 
 ############ <1>, genre ###########
 
@@ -22,11 +24,13 @@ Name: Captain America: Civil War		PG-13	Genre: 1
 Realease Date: 2016-05-06 	Duration: 147 mins
 Trailer ID: QGfhS1hfTWw		Poster: Captain America_Civil War.jpg
 Summary: Political interference in the Avengers' activities causes a rift between former allies Captain America and Iron Man.
+Status: 1
 
 Name: Independence Day: Resurgence		PG-13	Genre: 1
 Realease Date: 2016-06-24 	Duration: 120 mins
 Trailer ID: NCe_JshWOZ0		Poster: Independence Day_R.jpg
 Summary: Two decades after the first Independence Day invasion, Earth is faced with a new extra-Solar threat. But will mankind's new space defenses be enough?
+Status: 0
 
 ############ <PG-13>, maturity ###########
 
@@ -35,24 +39,28 @@ Name: Captain America: Civil War		PG-13	Genre: 1
 Realease Date: 2016-05-06 	Duration: 147 mins
 Trailer ID: QGfhS1hfTWw		Poster: Captain America_Civil War.jpg
 Summary: Political interference in the Avengers' activities causes a rift between former allies Captain America and Iron Man.
+Status: 1
 
 Name: Independence Day: Resurgence		PG-13	Genre: 1
 Realease Date: 2016-06-24 	Duration: 120 mins
 Trailer ID: NCe_JshWOZ0		Poster: Independence Day_R.jpg
 Summary: Two decades after the first Independence Day invasion, Earth is faced with a new extra-Solar threat. But will mankind's new space defenses be enough?
+Status: 0
 
 ############ <The father> ###########
 
-
-Name: The Conjuring 2		R	Genre: 10
-Realease Date: 2016-06-10 	Duration: 144 mins
-Trailer ID: HSaynNIu5vA		Poster: The conjuring2.jpg
-Summary: Lorraine and Ed Warren travel to north London to help a single mother raising four children alone in a house plagued by a malicious spirit.
 
 Name: The Godfather		R	Genre: 2
 Realease Date: 1972-03-24 	Duration: 175 mins
 Trailer ID: sY1S34973zA		Poster: god_father.jpg
 Summary: The early life and career of Vito Corleone in 1920s New York is portrayed while his son, Michael, expands and tightens his grip on his crime syndicate stretching from Lake Tahoe, Nevada to pre-revolution 1958 Cuba.
+Status: 0
+
+Name: The Conjuring 2		R	Genre: 10
+Realease Date: 2016-06-10 	Duration: 144 mins
+Trailer ID: HSaynNIu5vA		Poster: The conjuring2.jpg
+Summary: Lorraine and Ed Warren travel to north London to help a single mother raising four children alone in a house plagued by a malicious spirit.
+Status: 1
 
 ############ <> ###########
 

@@ -95,6 +95,7 @@ public class ForPackage_SearchMovies {
 					+ "\nTrailer ID: " + rs.getString("trailer")
 					+ "\t\tPoster: " + rs.getString("image")
 					+ "\nSummary: " + rs.getString("summary")
+					+ "\nStatus: " + rs.getString("NOW_PLAYING")
 					);
 
 		}
