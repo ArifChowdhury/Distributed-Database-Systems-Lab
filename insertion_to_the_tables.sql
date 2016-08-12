@@ -105,6 +105,12 @@ modify
 
 INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('U-20', TO_DATE('30-JUL-2016 17:00:00', 'DD-MON-YYYY HH24:MI:SS'), 1, 1 );
 INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('L-40', TO_DATE('30-JUL-2016 14:30:00', 'DD-MON-YYYY HH24:MI:SS'), 2, 2 );
-INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('U-24', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 1, 3 );
 INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('L-34', TO_DATE('31-JUL-2016 17:00:00', 'DD-MON-YYYY HH24:MI:SS'), 5, 4 );
-
+INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('U-24', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 1, 3 );
+INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('U-25', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 1, 3 );
+INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('U-15', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 1, 3 );
+INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('U-10', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 1, 3 );
+INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('U-07', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 1, 3 );
+INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('U-55', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 1, 3 );
+INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('U-32', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 1, 3 );
+INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('U-23', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 1, 3 );
