@@ -1,17 +1,38 @@
 
 ----------<For 'Zootopia(2016)'3D on the '31-JUL-16' at '11: 40 AM'>----------
 Booked seats are: 
-		U-07 
-		U-10 
-		U-15 
-		U-23 
-		U-24 
-		U-25 
-		U-32 
-		U-55 
+		LC55 
+		LE32 
+		UA10 
+		UB07 
+		UB24 
+		UD23 
+		UD25 
+		UE15 
 
 ----------<For 'Zootopia(2016)'3D on the '31-07-16' at '11: 40 AM'>----------
 ORA-20001: The date inserted is not in the correct format. The correct format is 'DD-MON-YY' e.g. '30-JUL-16'.
 
 ----------<For 'Zootopia(2016)'3D on the '31-JUL-16' at '11:40 AM'>----------
+ORA-20004: The time inserted is not in the correct format. The correct format is 'HH: MI AM' e.g. '11: 40 AM'.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+----------<For #Hall: 01|Date: 31-JUL-16|Time: 11: 40 AM|Movie-Format: 3D>----------
+Booked seats are: 
+		#Seat: LC55 | Price: 500
+		#Seat: LE32 | Price: 500
+		#Seat: UA10 | Price: 500
+		#Seat: UB07 | Price: 500
+		#Seat: UB24 | Price: 500
+		#Seat: UD23 | Price: 500
+		#Seat: UD25 | Price: 500
+		#Seat: UE15 | Price: 500
+
+----------<For #Hall: 01|Date: 31-JUL-2016|Time: 11: 40 AM|Movie-Format: 3D>----------
+ORA-20001: The date inserted is not in the correct format. The correct format is 'DD-MON-YY' e.g. '30-JUL-16'.
+
+----------<For #Hall: 01|Date: 31-JUL-16|Time: 11: 40 |Movie-Format: 3D>----------
 ORA-20004: The time inserted is not in the correct format. The correct format is 'HH: MI AM' e.g. '11: 40 AM'.

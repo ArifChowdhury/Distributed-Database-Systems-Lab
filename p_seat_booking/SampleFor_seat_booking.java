@@ -18,6 +18,43 @@ public class SampleFor_seat_booking {
 
 		System.out.println("\n----------<For 'Zootopia(2016)'3D on the '31-JUL-16' at '11:40 AM'>----------");
 		getBookedSeats("Zootopia(2016)", 3, "31-JUL-16", "11:40 AM");//<-- Will throw an EXCEPTION
+
+		System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+
+		System.out.println("\n----------<For #Hall: 01|Date: 31-JUL-16|Time: 11: 40 AM|Movie-Format: 3D>----------");
+		getBookedSeatsWithPrices(01, "31-JUL-16", "11: 40 AM", 3);
+
+		System.out.println("\n----------<For #Hall: 01|Date: 31-JUL-2016|Time: 11: 40 AM|Movie-Format: 3D>----------");
+		getBookedSeatsWithPrices(01, "31-JUL-2016", "11: 40 AM", 3);//<-- Will throw an EXCEPTION
+
+		System.out.println("\n----------<For #Hall: 01|Date: 31-JUL-16|Time: 11: 40 |Movie-Format: 3D>----------");
+		getBookedSeatsWithPrices(01, "31-JUL-16", "11: 40 ", 3);//<-- Will throw an EXCEPTION
+	}
+
+	private static void getBookedSeatsWithPrices(int hallNo, String showDate,
+			String showTime, int movieFormat) {
+		try{
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			Connection conn = DriverManager.getConnection ("jdbc:oracle:thin:@localhost:1521:xe", "MOVIE","MOVIE");
+			CallableStatement call = null;
+			call = conn.prepareCall ("{ call seat_booking.get_booked_seats_with_prices( "+hallNo+", '"+showDate+"', '"+showTime+"', "+movieFormat+", ?)}");
+			call.registerOutParameter (1, OracleTypes.CURSOR);
+			call.execute ();
+			ResultSet rs = (ResultSet)call.getObject (1);
+			System.out.println("Booked seats are: ");
+			while (rs.next()) {
+				System.out.println("\t\t#Seat: "+rs.getString("SEATNO")+" | Price: "+rs.getString("PRICE"));
+			}
+			rs.close();
+			call.close();
+			conn.close();
+		}catch (SQLException  e) {
+			printSQLERRM(e);
+		}catch (Exception e) {
+			System.out.println(e.getLocalizedMessage());
+		}
+
 	}
 
 	private static void getBookedSeats(String movieName, int foramt, String showDate, String showTime) {
