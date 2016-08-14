@@ -16,6 +16,7 @@ PACKAGE seat_booking AS
                             seat_no_list VARCHAR2,
                             availability OUT NUMBER,
                             already_booked_seats OUT VARCHAR2);
+  PROCEDURE get_ticket_price(p_hall_no IN CINEMA_HALLS.HALLNO%TYPE, p_format IN TICKET_PRICES.FORMAT%TYPE, p_ticket_price OUT TICKET_PRICES.PRICE%TYPE);
 END seat_booking;
 /
 CREATE OR REPLACE
@@ -169,7 +170,27 @@ PACKAGE BODY seat_booking AS
       END IF;
     END LOOP;
   END are_seats_available;
+  PROCEDURE get_ticket_price(p_hall_no IN CINEMA_HALLS.HALLNO%TYPE, p_format IN TICKET_PRICES.FORMAT%TYPE, p_ticket_price OUT TICKET_PRICES.PRICE%TYPE)AS
+  BEGIN
+    SELECT TICKET_PRICES.PRICE INTO p_ticket_price
+      FROM CINEMA_HALLS JOIN TICKET_PRICES
+        ON CINEMA_HALLS.CATEGORY = TICKET_PRICES.CATEGORY
+      WHERE CINEMA_HALLS.HALLNO = p_hall_no
+      AND TICKET_PRICES.FORMAT = p_format;
+  END get_ticket_price;
 END seat_booking;
+/
+--|| Testing get_ticket_price ||--
+SET SERVEROUTPUT ON;
+DECLARE
+  l_ticket_price TICKET_PRICES.PRICE%TYPE;
+BEGIN
+  seat_booking.get_ticket_price(p_hall_no => 1,
+                   p_format => 3, 
+                   p_ticket_price => l_ticket_price 
+                   );
+  DBMS_OUTPUT.put_line('Price: '||l_ticket_price);
+END;
 /
 --|| Testing are_seats_availabe ||--
 SET SERVEROUTPUT ON;

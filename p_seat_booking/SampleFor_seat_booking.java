@@ -61,7 +61,6 @@ public class SampleFor_seat_booking {
 
 		System.out.println("SeatNo: LA34 | HallNo: 5 | Date: 31-JUL-16 | Time: 05: 00 PM");
 		isSeatAvailable("31-JUL-16", "05: 00 PM", 5, "LA34");
-
 		//All the EXCEPTIONs shown in previous cases are also applicable here too.
 
 		System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -73,9 +72,38 @@ public class SampleFor_seat_booking {
 
 		System.out.println("\nSeatNo: LA03,LA04 | HallNo: 6 | Date: 31-JUL-16 | Time: 11: 40 AM");
 		areSeatsAvailable("31-JUL-16", "11: 40 AM", 6, "LA03,LA04");
-
 		//All the EXCEPTIONs shown in previous cases are also applicable here too.
 
+		System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		System.out.println("\tPROCEDURE: get_ticket_price -> returns: price_of_ticket");
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+
+		System.out.println("\nHall-no: 1 | Format: 3");
+		getTicketPrice(1, 3);
+
+		System.out.println("\nHall-no: 1 | Format: 2");
+		getTicketPrice(1, 2);
+
+		System.out.println("\nHall-no: 2 | Format: 3");
+		getTicketPrice(2, 3);
+	}
+
+	private static void getTicketPrice(int hallNo, int format) {
+		try{
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			Connection conn = DriverManager.getConnection ("jdbc:oracle:thin:@localhost:1521:xe", "MOVIE","MOVIE");
+			CallableStatement call = null;
+			call = conn.prepareCall ("{ call seat_booking.get_ticket_price( "+hallNo+", "+format+", ?)}");
+			call.registerOutParameter (1, OracleTypes.NUMBER);
+			call.execute ();
+			System.out.println("Price:\t"+call.getInt(1));
+			call.close();
+			conn.close();
+		}catch (SQLException  e) {
+			printSQLERRM(e);
+		}catch (Exception e) {
+			System.out.println(e.getLocalizedMessage());
+		}
 	}
 
 	private static void areSeatsAvailable(String showDate, String showTime, int hallNo,

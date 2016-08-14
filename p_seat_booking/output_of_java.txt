@@ -80,3 +80,17 @@ SeatNo: LA03,LA04 | HallNo: 6 | Date: 31-JUL-16 | Time: 11: 40 AM
 The seats you queried for:
 LA03,LA04
 <<Available>>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PROCEDURE: get_ticket_price -> returns: price_of_ticket
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Hall-no: 1 | Format: 3
+Price:	500
+
+Hall-no: 1 | Format: 2
+Price:	450
+
+Hall-no: 2 | Format: 3
+Price:	400
