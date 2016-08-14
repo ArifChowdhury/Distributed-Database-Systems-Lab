@@ -5,6 +5,11 @@ PACKAGE seat_booking AS
   PROCEDURE get_booked_seats_with_prices( hall_no IN CINEMA_HALLS.HALLNO%TYPE, p_show_date IN VARCHAR2,
                              p_show_time IN VARCHAR2, p_format IN TICKET_PRICES.FORMAT%TYPE, seat_numbers_with_price OUT SYS_REFCURSOR);
   PROCEDURE is_hall_full(p_show_date IN VARCHAR2, p_show_time IN VARCHAR2, p_hall_no IN VARCHAR2, p_housefull OUT NUMBER);
+  PROCEDURE is_seat_available(p_show_date IN VARCHAR2,
+                            p_show_time IN VARCHAR2,
+                            p_hall_no IN BOOKED_SEATS.HALLNO%TYPE,
+                            p_seat_no IN BOOKED_SEATS.SEATNO%TYPE,
+                            p_availability OUT NUMBER);
 END seat_booking;
 /
 CREATE OR REPLACE
@@ -113,7 +118,47 @@ PACKAGE BODY seat_booking AS
       p_housefull := 0;
     END IF;
   END is_hall_full;
+  PROCEDURE is_seat_available(p_show_date IN VARCHAR2,
+                            p_show_time IN VARCHAR2,
+                            p_hall_no IN BOOKED_SEATS.HALLNO%TYPE,
+                            p_seat_no IN BOOKED_SEATS.SEATNO%TYPE,
+                            p_availability OUT NUMBER) AS
+    no_of_rows NUMBER;
+  BEGIN
+      util.expn_handle_date_and_time(p_date_in => p_show_date, p_time_in => p_show_time);
+      SELECT COUNT(*) INTO no_of_rows
+        FROM BOOKED_SEATS
+        WHERE SEATNO = p_seat_no
+        AND TO_CHAR(SHOWDATETIME, 'DD-MON-YY') = TO_DATE(p_show_date, 'DD-MON-YY')
+        AND TO_CHAR(SHOWDATETIME, 'HH12: MI AM') = p_show_time
+        AND HALLNO = p_hall_no;
+      IF no_of_rows<1 THEN
+        p_availability := 1;
+      ELSE
+        p_availability := 0;
+      END IF;
+  END is_seat_available;
 END seat_booking;
+/
+--|| Testing is_seat_availabe ||--
+SET SERVEROUTPUT ON;
+DECLARE
+  l_avaibility NUMBER(2);
+BEGIN
+  seat_booking.is_seat_available(p_show_date => '31-JUL-16',
+                    p_show_time => '05: 00 PM',
+                    p_hall_no => 5,
+                    p_seat_no => 'LB34',
+                    p_availability => l_avaibility);
+  IF l_avaibility = 1 THEN
+    DBMS_OUTPUT.PUT_LINE('Available');
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('Not available');
+  END IF;
+  EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;
 /
 --|| Testing is_hall_full ||--
 SET SERVEROUTPUT ON;

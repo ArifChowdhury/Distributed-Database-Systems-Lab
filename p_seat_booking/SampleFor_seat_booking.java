@@ -52,6 +52,37 @@ public class SampleFor_seat_booking {
 		System.out.println("On the 31-JUL-16 at 21: 40 AM, is there any available seats left in the Hall-No 1?");
 		isHallFull("31-JUL-16", "21: 40 AM", 1);//<-- Will throw an EXCEPTION
 
+		System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		System.out.println("\tPROCEDURE: is_seat_available -> returns: NUMBER[01] availability");
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+
+		System.out.println("SeatNo: LB34 | HallNo: 5 | Date: 31-JUL-16 | Time: 05: 00 PM");
+		isSeatAvailable("31-JUL-16", "05: 00 PM", 5, "LB34");
+
+		System.out.println("SeatNo: LA34 | HallNo: 5 | Date: 31-JUL-16 | Time: 05: 00 PM");
+		isSeatAvailable("31-JUL-16", "05: 00 PM", 5, "LA34");
+
+		//All the EXCEPTIONs shown in previous cases are also applicable here too.
+
+	}
+
+	private static void isSeatAvailable(String showDate, String showTime, int hallNo, String seatNo) {
+		try{
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			Connection conn = DriverManager.getConnection ("jdbc:oracle:thin:@localhost:1521:xe", "MOVIE","MOVIE");
+			CallableStatement call = null;
+			call = conn.prepareCall ("{ call seat_booking.is_seat_available( '"+showDate+"', '"+showTime+"', "+hallNo+", '"+seatNo+"', ?)}");
+			call.registerOutParameter (1, OracleTypes.NUMBER);
+			call.execute ();
+			System.out.println((call.getInt(1)==1)? "Available." : "Not availabe.");
+			call.close();
+			conn.close();
+		}catch (SQLException  e) {
+			printSQLERRM(e);
+		}catch (Exception e) {
+			System.out.println(e.getLocalizedMessage());
+		}
+
 	}
 
 	private static void isHallFull(String showDate, String showTime, int hallNo) {
