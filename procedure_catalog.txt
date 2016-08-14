@@ -1,0 +1,11 @@
+All the public PROCEDUREs are listed below:
+
+01. edit_data.insert_row(table_name IN.., input_data IN.., new_row OUT..)  //<-- Right now it only works for CUSTOMERS table.
+02. p_get_schedule.for_date(date_input IN.., refc_result_set OUT..)
+03. p_get_schedule.for_movie(movie_name IN.., date_input IN.., refc_result_set OUT..)
+04. p_get_schedule.for_movie(movie_name IN.., date_input IN.., format_input IN.., refc_result_set OUT..)
+05. search_movies.get_movies(search_key_input IN.., key_type_input IN.., c_movie_list OUT..)
+06. search_movies.get_movies(search_key_input IN.., c_movie_list OUT..)
+07. seat_booking.get_booked_seats(p_movie_name IN.., p_format IN.., p_show_date IN.., p_show_time IN.., p_seat_numbers OUT ..)
+08. seat_booking.get_booked_seats_with_prices(hall_no IN.., p_show_date IN.., p_show_time IN.., p_format IN.., seat_numbers_with_price OUT)
+09. seat_booking.is_hall_full(p_show_date IN.., p_show_time IN.., p_hall_no IN.., p_housefull OUT..)
