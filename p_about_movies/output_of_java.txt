@@ -1,0 +1,14 @@
+<isMoviePlaying("The Godfather", "31-JUL-16", "11: 40 AM", 6);>
+Playing
+
+<isMoviePlaying("The Conjuring", "31-JUL-16", "11: 40 AM", 6);>
+Not playing
+
+<isMoviePlaying("The Godfather", "31-08-16", "11: 40 AM", 6);>
+ORA-20001: The date inserted is not in the correct format. The correct format is 'DD-MON-YY' e.g. '30-JUL-16'.
+
+<isMoviePlaying("The Godfather", "31-JUL-16", "11:40 AM", 6);>
+ORA-20004: The time inserted is not in the correct format. The correct format is 'HH: MI AM' e.g. '11: 40 AM'.
+
+<isMoviePlaying("The Godfather", "31-JUL-16", "31: 40 AM", 6);>
+ORA-20006: The time is not valid.

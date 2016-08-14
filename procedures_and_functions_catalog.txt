@@ -1,4 +1,4 @@
-All the public PROCEDUREs are listed below:
+All the public PROCEDURE(s) are listed below:
 
 01. edit_data.insert_row(table_name IN.., input_data IN.., new_row OUT..)  //<-- Right now it only works for CUSTOMERS table.
 02. p_get_schedule.for_date(date_input IN.., refc_result_set OUT..)
@@ -10,3 +10,10 @@ All the public PROCEDUREs are listed below:
 08. seat_booking.get_booked_seats_with_prices(hall_no IN.., p_show_date IN.., p_show_time IN.., p_format IN.., seat_numbers_with_price OUT)
 09. seat_booking.is_hall_full(p_show_date IN.., p_show_time IN.., p_hall_no IN.., p_housefull OUT..)
 10. util.is_time_valid(p_time IN.., p_validity OUT..)
+11. util.is_date_format_valid(p_date IN.., p_validity OUT..)
+12. util.is_time_format_valid(p_time IN.., p_validity OUT..)
+13. util.expn_handle_date_and_time(p_date_in IN.., p_time_in IN..)
+
+
+All the public FUNCTION(s) are listed below:
+01. is_movie_playing(p_movie_name IN.., p_show_date IN.., p_show_time IN.., p_hall_no IN..)RETURN NUMBER; <-- 0|1

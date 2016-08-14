@@ -86,8 +86,8 @@ PACKAGE BODY seat_booking AS
    l_valid_time NUMBER;
    l_number_of_booked_seats NUMBER;
    l_capacity_of_hall CINEMA_HALLS.CAPACITY%TYPE;
-   ex_invalid_time EXCEPTION;
-   PRAGMA EXCEPTION_INIT( ex_invalid_time, -20001 );
+   /*ex_invalid_time EXCEPTION;
+   PRAGMA EXCEPTION_INIT( ex_invalid_time, -20001 );*/
   BEGIN
     IF NOT REGEXP_LIKE (p_show_time, '^\d{2}:\s{1}\d{2}\s{1}[AP]M$') THEN
       RAISE_APPLICATION_ERROR( -20004, 'The time inserted is not in the correct format. The correct format is ''HH: MI AM'' e.g. ''11: 40 AM''.' ); 

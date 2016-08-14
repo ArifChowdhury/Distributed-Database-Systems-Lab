@@ -2,6 +2,7 @@
 CREATE OR REPLACE PACKAGE search_movies AS
   PROCEDURE get_movies (search_key_input IN VARCHAR2, key_type_input IN VARCHAR2, c_movie_list OUT SYS_REFCURSOR);
   PROCEDURE get_movies (search_key_input IN VARCHAR2, c_movie_list OUT SYS_REFCURSOR);
+  
 END search_movies;
 /
 --|| Body of the Package
@@ -11,7 +12,6 @@ CREATE OR REPLACE PACKAGE BODY search_movies AS
   PRAGMA EXCEPTION_INIT( ex_search_key_can_not_be_null, -20002);
   ex_r_yr_cn_nt_be_lss_thn_1990 EXCEPTION;
   PRAGMA EXCEPTION_INIT( ex_r_yr_cn_nt_be_lss_thn_1990, -20003);
-  
   
   PROCEDURE get_movies_helper_show_query(search_key IN OUT VARCHAR2, key_type IN VARCHAR2, movie_list OUT SYS_REFCURSOR) AS
     l_statement VARCHAR2(500);
@@ -44,14 +44,11 @@ CREATE OR REPLACE PACKAGE BODY search_movies AS
     --DBMS_OUTPUT.PUT_LINE(l_statement);
     OPEN movie_list FOR l_statement;
   END get_movies_helper_show_query;
-
-  
   PROCEDURE get_movies (search_key_input IN VARCHAR2, key_type_input IN VARCHAR2, c_movie_list OUT SYS_REFCURSOR) AS
       l_search_key VARCHAR2(100):= search_key_input;
     BEGIN
       get_movies_helper_show_query( search_key => l_search_key, key_type => key_type_input, movie_list => c_movie_list);
     END get_movies;
-    
   PROCEDURE get_movies (search_key_input IN VARCHAR2, c_movie_list OUT SYS_REFCURSOR) AS
       keys_array apex_application_global.vc_arr2;
       l_statement VARCHAR2(500) := 'SELECT DISTINCT m.MOVIENAME, m.RELEASEDATE, m.DURATION, m.GENRE, m.MATURITY, m.SUMMARY, m.TRAILER, m.IMAGE, mit.NOW_PLAYING FROM MOVIES m JOIN MOVIES_IN_THEATER mit ON m.MOVIEID = mit.MOVIEID';
