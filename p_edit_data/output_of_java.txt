@@ -1,3 +1,31 @@
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PROCEDURE: instertRow -> returns: the-inserted-row
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+CUSTOMERS | Zaman,zaman@mail.com,01545412
 New Entry:
-ID: 1022 Name: Zaman Email: zaman@mail.com Phone: 01545412
+ID: 1045 Name: Zaman Email: zaman@mail.com Phone: 01545412
+
+CUSTOMERS | Zaman,zaman@mail.com,01545412
 ORA-00001: unique constraint (MOVIE.SYS_C007563) violated
+
+CUSTOMERS | sad,asda,ad,dsa
+ORA-20007: There is more or less than enough data for inserting into CUSTOMERS table.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PROCEDURE: get_reflection -> returns: the-reflected-row
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+CUSTOMERS | Zaman,zaman@mail.com,01545412
+New Entry:
+ID: 1045 Name: Zaman Email: zaman@mail.com Phone: 01545412
+
+CUSTOMERS | Arif,Zaman,zaman@mail.com,01545412
+ORA-20007: There is more or less than enough data for inserting into CUSTOMERS table.
+
+CUSTOMERS | Zaman0,zaman@mail.com0,01546412
+New Entry:
+ID: 1047 Name: Zaman0 Email: zaman@mail.com0 Phone: 01546412
