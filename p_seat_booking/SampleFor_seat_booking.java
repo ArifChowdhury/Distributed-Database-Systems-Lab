@@ -64,6 +64,40 @@ public class SampleFor_seat_booking {
 
 		//All the EXCEPTIONs shown in previous cases are also applicable here too.
 
+		System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		System.out.println("\tPROCEDURE: are_seats_available -> returns: NUMBER[01] availability, list_booked_seats");
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+
+		System.out.println("SeatNo: LA01,LA02,LA03,LA04 | HallNo: 6 | Date: 31-JUL-16 | Time: 11: 40 AM");
+		areSeatsAvailable("31-JUL-16", "11: 40 AM", 6, "LA01,LA02,LA03,LA04");
+
+		System.out.println("\nSeatNo: LA03,LA04 | HallNo: 6 | Date: 31-JUL-16 | Time: 11: 40 AM");
+		areSeatsAvailable("31-JUL-16", "11: 40 AM", 6, "LA03,LA04");
+
+		//All the EXCEPTIONs shown in previous cases are also applicable here too.
+
+	}
+
+	private static void areSeatsAvailable(String showDate, String showTime, int hallNo,
+			String seatNoList) {
+		try{
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			Connection conn = DriverManager.getConnection ("jdbc:oracle:thin:@localhost:1521:xe", "MOVIE","MOVIE");
+			CallableStatement call = null;
+			call = conn.prepareCall ("{ call seat_booking.are_seats_available( '"+showDate+"', '"+showTime+"', "+hallNo+", '"+seatNoList+"', ?, ?)}");
+			call.registerOutParameter (1, OracleTypes.NUMBER);
+			call.registerOutParameter (2, OracleTypes.VARCHAR);
+			call.execute ();
+			System.out.println("The seats you queried for:\n"+seatNoList);
+			System.out.println((call.getInt(1) == 1)?"<<Available>>":"<<Not available>>\nSeats that were already booked:\n"+call.getString(2));
+			call.close();
+			conn.close();
+		}catch (SQLException  e) {
+			printSQLERRM(e);
+		}catch (Exception e) {
+			System.out.println(e.getLocalizedMessage());
+		}
+
 	}
 
 	private static void isSeatAvailable(String showDate, String showTime, int hallNo, String seatNo) {

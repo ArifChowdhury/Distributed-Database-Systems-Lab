@@ -10,6 +10,12 @@ PACKAGE seat_booking AS
                             p_hall_no IN BOOKED_SEATS.HALLNO%TYPE,
                             p_seat_no IN BOOKED_SEATS.SEATNO%TYPE,
                             p_availability OUT NUMBER);
+  PROCEDURE are_seats_available(show_date IN VARCHAR2,
+                            show_time IN VARCHAR2,
+                            hall_no IN BOOKED_SEATS.HALLNO%TYPE,
+                            seat_no_list VARCHAR2,
+                            availability OUT NUMBER,
+                            already_booked_seats OUT VARCHAR2);
 END seat_booking;
 /
 CREATE OR REPLACE
@@ -138,7 +144,56 @@ PACKAGE BODY seat_booking AS
         p_availability := 0;
       END IF;
   END is_seat_available;
+  PROCEDURE are_seats_available(show_date IN VARCHAR2,
+                                show_time IN VARCHAR2,
+                                hall_no IN BOOKED_SEATS.HALLNO%TYPE,
+                                seat_no_list VARCHAR2,
+                                availability OUT NUMBER,
+                                already_booked_seats OUT VARCHAR2) AS
+     seats_array apex_application_global.vc_arr2;
+     t_availablity NUMBER(1);
+  BEGIN
+    availability := 1;
+    already_booked_seats := '';
+    seats_array := apex_util.string_to_table(seat_no_list, ',');
+    FOR i IN 1..seats_array.COUNT
+    LOOP
+      is_seat_available(p_show_date => show_date,
+                        p_show_time => show_time,
+                        p_hall_no => hall_no,
+                        p_seat_no => seats_array(i),
+                        p_availability => t_availablity);
+      IF t_availablity = 0 THEN
+        availability := 0;
+        already_booked_seats := already_booked_seats || ' ' ||seats_array(i);
+      END IF;
+    END LOOP;
+  END are_seats_available;
 END seat_booking;
+/
+--|| Testing are_seats_availabe ||--
+SET SERVEROUTPUT ON;
+DECLARE
+  l_avaibility NUMBER(2);
+  l_bad_seats VARCHAR2(300);
+  p_seat_list VARCHAR2(300) := 'LA01,LA02,LA03,LA04';
+BEGIN
+  seat_booking.are_seats_available(show_date => '31-JUL-16',
+                      show_time => '11: 40 AM',
+                      hall_no => 6,
+                      seat_no_list => p_seat_list,
+                      availability => l_avaibility,
+                      already_booked_seats => l_bad_seats);
+  DBMS_OUTPUT.put_line('Seats you queried for:'||chr(10)||p_seat_list);
+  IF l_avaibility = 1 THEN
+    DBMS_OUTPUT.PUT_LINE('Available');
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('Not available.'||chr(10)||'Seats that were already booked:'||chr(10)||l_bad_seats);
+  END IF;
+  EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;
 /
 --|| Testing is_seat_availabe ||--
 SET SERVEROUTPUT ON;

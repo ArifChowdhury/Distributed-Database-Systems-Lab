@@ -10,10 +10,11 @@ All the public PROCEDURE(s) are listed below:
 08. seat_booking.get_booked_seats_with_prices(hall_no IN.., p_show_date IN.., p_show_time IN.., p_format IN.., seat_numbers_with_price OUT)
 09. seat_booking.is_hall_full(p_show_date IN.., p_show_time IN.., p_hall_no IN.., p_housefull OUT..)
 10. seat_booking.is_seat_available(p_show_date IN.., p_show_time IN.., p_hall_no IN.., p_seat_no IN.., p_availability OUT..)
-11. util.is_time_valid(p_time IN.., p_validity OUT..)
-12. util.is_date_format_valid(p_date IN.., p_validity OUT..)
-13. util.is_time_format_valid(p_time IN.., p_validity OUT..)
-14. util.expn_handle_date_and_time(p_date_in IN.., p_time_in IN..)
+11. seat_booking.are_seats_available(show_date IN.., show_time IN.., hall_no IN.., seat_no_list IN.., availability OUT.., already_booked_seats OUT..)
+12. util.is_time_valid(p_time IN.., p_validity OUT..)
+13. util.is_date_format_valid(p_date IN.., p_validity OUT..)
+14. util.is_time_format_valid(p_time IN.., p_validity OUT..)
+15. util.expn_handle_date_and_time(p_date_in IN.., p_time_in IN..)
 
 
 All the public FUNCTION(s) are listed below:

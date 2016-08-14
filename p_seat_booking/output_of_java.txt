@@ -64,3 +64,19 @@ SeatNo: LB34 | HallNo: 5 | Date: 31-JUL-16 | Time: 05: 00 PM
 Not availabe.
 SeatNo: LA34 | HallNo: 5 | Date: 31-JUL-16 | Time: 05: 00 PM
 Available.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PROCEDURE: are_seats_available -> returns: NUMBER[01] availability, list_booked_seats
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+SeatNo: LA01,LA02,LA03,LA04 | HallNo: 6 | Date: 31-JUL-16 | Time: 11: 40 AM
+The seats you queried for:
+LA01,LA02,LA03,LA04
+<<Not available>>
+Seats that were already booked:
+ LA01 LA02
+
+SeatNo: LA03,LA04 | HallNo: 6 | Date: 31-JUL-16 | Time: 11: 40 AM
+The seats you queried for:
+LA03,LA04
+<<Available>>
