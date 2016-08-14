@@ -14,7 +14,7 @@ INSERT INTO CINEMA_HALLS (hallNo, capacity, upper_seats, lower_seats, category) 
 INSERT INTO CINEMA_HALLS (hallNo, capacity, upper_seats, lower_seats, category) VALUES(3, 150, 75, 75, 2);
 INSERT INTO CINEMA_HALLS (hallNo, capacity, upper_seats, lower_seats, category) VALUES(4, 160, 80, 80, 1);
 INSERT INTO CINEMA_HALLS (hallNo, capacity, upper_seats, lower_seats, category) VALUES(5, 190, 95, 95, 1);
-
+INSERT INTO CINEMA_HALLS (hallNo, capacity, upper_seats, lower_seats, category) VALUES(6, 10, 7, 3, 1);
 
 --CUSTOMERS
 INSERT INTO CUSTOMERS (customerId, name, emailId, phone) VALUES (1, 'Shuvo', 'shuvo@gmail.com', '01700111111');
@@ -34,7 +34,6 @@ INSERT ALL
    INTO CUSTOMERS (customerId, name, emailId, phone) VALUES (SEQ_CUSTOMERS_ID.NEXTVAL, 'ShuvoJit', 'ShuvoJit@gmail.com', '0175444117')
    INTO CUSTOMERS (customerId, name, emailId, phone) VALUES (SEQ_CUSTOMERS_ID.NEXTVAL, 'IqbalRocky', 'IqbalRocky@gmail.com', '01254154544')
 SELECT 1 FROM DUAL;
-
 
 --MOVIES_IN_THEATER
 INSERT INTO MOVIES_IN_THEATER(movieId, premereDate, now_playing) VALUES (1, '21-JUL-2016', 1);
@@ -81,7 +80,9 @@ INSERT INTO SHOW_TIMES (showDateTime, hallNo, movieId, format)
   VALUES (TO_DATE('04-AUG-2016 19:30:00', 'DD-MON-YYYY HH24:MI:SS'), 1, 6, 3);
 INSERT INTO SHOW_TIMES (showDateTime, hallNo, movieId, format) 
   VALUES (TO_DATE('04-AUG-2016 11:10:00', 'DD-MON-YYYY HH24:MI:SS'), 1, 6, 3);
-  
+INSERT INTO SHOW_TIMES (showDateTime, hallNo, movieId, format) 
+  VALUES (TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 6, 6, 3);
+
 
 --TICKET_PRICES
 INSERT INTO TICKET_PRICES (category, format, price) VALUES (1, 2, 250.00);
@@ -127,3 +128,13 @@ INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('UB0
 INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('LC55', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 1, 3 );
 INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('LE32', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 1, 3 );
 INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('UD23', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 1, 3 );
+INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('UA1', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 6, 3 );
+INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('UA2', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 6, 3 );
+INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('UA3', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 6, 3 );
+INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('UA4', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 6, 3 );
+INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('UB1', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 6, 3 );
+INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('UB2', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 6, 3 );
+INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('UC1', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 6, 3 );
+INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('LA1', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 6, 3 );
+INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('LA2', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 6, 3 );
+INSERT INTO BOOKED_SEATS (seatNo, showDateTime, hallNo, purchaseId) VALUES ('LB1', TO_DATE('31-JUL-2016 11:40:00', 'DD-MON-YYYY HH24:MI:SS'), 6, 3 );

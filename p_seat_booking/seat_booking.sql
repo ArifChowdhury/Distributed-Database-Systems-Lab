@@ -4,6 +4,7 @@ PACKAGE seat_booking AS
                 p_format IN NOW_SHOWING_MOVIES.FORMAT%TYPE, p_show_date IN VARCHAR2, p_show_time IN VARCHAR2, p_seat_numbers OUT SYS_REFCURSOR);
   PROCEDURE get_booked_seats_with_prices( hall_no IN CINEMA_HALLS.HALLNO%TYPE, p_show_date IN VARCHAR2,
                              p_show_time IN VARCHAR2, p_format IN TICKET_PRICES.FORMAT%TYPE, seat_numbers_with_price OUT SYS_REFCURSOR);
+  PROCEDURE is_hall_full(p_show_date IN VARCHAR2, p_show_time IN VARCHAR2, p_hall_no IN VARCHAR2, p_housefull OUT NUMBER);
 END seat_booking;
 /
 CREATE OR REPLACE
@@ -80,7 +81,55 @@ PACKAGE BODY seat_booking AS
       HAVING COUNT(*) = 1
       ORDER BY bs.SEATNO*/;
   END get_booked_seats_with_prices;
+  PROCEDURE is_hall_full(p_show_date IN VARCHAR2, p_show_time IN VARCHAR2, p_hall_no IN VARCHAR2, p_housefull OUT NUMBER)
+  AS
+   l_valid_time NUMBER;
+   l_number_of_booked_seats NUMBER;
+   l_capacity_of_hall CINEMA_HALLS.CAPACITY%TYPE;
+   ex_invalid_time EXCEPTION;
+   PRAGMA EXCEPTION_INIT( ex_invalid_time, -20001 );
+  BEGIN
+    IF NOT REGEXP_LIKE (p_show_time, '^\d{2}:\s{1}\d{2}\s{1}[AP]M$') THEN
+      RAISE_APPLICATION_ERROR( -20004, 'The time inserted is not in the correct format. The correct format is ''HH: MI AM'' e.g. ''11: 40 AM''.' ); 
+    END IF;
+    IF NOT REGEXP_LIKE (p_show_date, '^\d{2}-\w{3}-\d{2}$') THEN
+      RAISE_APPLICATION_ERROR( -20001, 'The date inserted is not in the correct format. The correct format is ''DD-MON-YY'' e.g. ''30-JUL-16''.' ); 
+    END IF;
+    util.is_time_valid(p_show_time, l_valid_time);
+    IF l_valid_time = 0 THEN 
+      RAISE_APPLICATION_ERROR( -20006, 'The time is not valid.' ); 
+    END IF;
+    SELECT CAPACITY INTO l_capacity_of_hall
+      FROM CINEMA_HALLS
+      WHERE HALLNO = p_hall_no;
+    SELECT COUNT(*) INTO l_number_of_booked_seats
+      FROM BOOKED_SEATS 
+      WHERE HALLNO = p_hall_no
+      AND TO_CHAR(SHOWDATETIME, 'DD-MON-YY') = p_show_date
+      AND TO_CHAR(SHOWDATETIME, 'HH12: MI AM') = p_show_time;
+    IF l_capacity_of_hall = l_number_of_booked_seats THEN
+      p_housefull := 1;
+    ELSE 
+      p_housefull := 0;
+    END IF;
+  END is_hall_full;
 END seat_booking;
+/
+--|| Testing is_hall_full ||--
+SET SERVEROUTPUT ON;
+DECLARE
+  l_hosefull NUMBER(1);
+BEGIN
+  seat_booking.is_hall_full(p_show_date => '31-JUL-16',
+                    p_show_time => '11: 40 AM',
+                    p_hall_no => 6, --|<-- Enter hallNo: 6 to experiment with a hall which has no available seats. Otherwise enter 1. -->|--
+                    p_housefull => l_hosefull);
+  IF l_hosefull = 1 THEN
+    DBMS_OUTPUT.PUT_LINE('Full');
+  ELSIF l_hosefull = 0 THEN
+    DBMS_OUTPUT.PUT_LINE('Not Full');
+  END IF;
+END;
 /
 --|| Testing the get_booked_seats_with_prices ||--
 SET SERVEROUTPUT ON;
