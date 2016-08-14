@@ -16,4 +16,4 @@ All the public PROCEDURE(s) are listed below:
 
 
 All the public FUNCTION(s) are listed below:
-01. is_movie_playing(p_movie_name IN.., p_show_date IN.., p_show_time IN.., p_hall_no IN..)RETURN NUMBER; <-- 0|1
+01. about_movies.is_movie_playing(p_movie_name IN.., p_show_date IN.., p_show_time IN.., p_hall_no IN..)RETURN NUMBER; <-- 0|1
