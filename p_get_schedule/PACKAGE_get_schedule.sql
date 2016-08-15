@@ -18,12 +18,13 @@ PACKAGE BODY p_get_schedule AS
     IF REGEXP_LIKE (date_input, '^\d{2}-\w{3}-\d{2}$') THEN
       OPEN refc_result_set FOR 
       SELECT SHOW_TIMES.HALLNO, TO_CHAR(SHOW_TIMES.SHOWDATETIME , 'HH12:MI AM') AS "SHOWTIME"
-      FROM MOVIES, SHOW_TIMES
-      WHERE MOVIES.MOVIEID = SHOW_TIMES.MOVIEID
-      AND TO_CHAR(SHOW_TIMES.SHOWDATETIME, 'DD-MON-YY') = date_input
-      AND MOVIES.MOVIENAME LIKE '%'||movie_name||'%'
+      FROM MOVIES JOIN SHOW_TIMES
+        ON MOVIES.MOVIEID = SHOW_TIMES.MOVIEID
+      WHERE TO_CHAR(SHOW_TIMES.SHOWDATETIME, 'DD-MON-YY') = date_input
+      AND MOVIES.MOVIENAME = movie_name
       AND SHOW_TIMES.FORMAT = format_input
       ORDER BY SHOW_TIMES.SHOWDATETIME;
+  
     ELSE
       RAISE_APPLICATION_ERROR( -20001, 'The date inserted is not in the correct format. The correct format is ''DD-MON-YY'' e.g. ''30-JUL-16''.' ); 
     END IF;
@@ -72,16 +73,23 @@ DECLARE
   result_set SYS_REFCURSOR;
   l_hall_no SHOW_TIMES.HALLNO%TYPE;
   l_showtime VARCHAR2(10);
-  l_format SHOW_TIMES.FORMAT%TYPE := 3;
+  l_format SHOW_TIMES.FORMAT%TYPE := 2;
 BEGIN
-  P_GET_SCHEDULE.FOR_MOVIE( movie_name => 'The Godfather',
-                          date_input => '04-AUG-16',  --Change the date with invalid one or in the wrong format and it will be caught!
+      /*SELECT SHOW_TIMES.HALLNO, TO_CHAR(SHOW_TIMES.SHOWDATETIME , 'HH12:MI AM') AS "SHOWTIME"
+      FROM MOVIES JOIN SHOW_TIMES
+        ON MOVIES.MOVIEID = SHOW_TIMES.MOVIEID
+      WHERE TO_CHAR(SHOW_TIMES.SHOWDATETIME, 'DD-MON-YY') = '19-AUG-16'
+      AND MOVIES.MOVIENAME = 'The Conjuring 2'
+      AND SHOW_TIMES.FORMAT = 2
+      ORDER BY SHOW_TIMES.SHOWDATETIME;*/
+  P_GET_SCHEDULE.FOR_MOVIE( movie_name => 'The Conjuring 2',
+                          date_input => '19-AUG-16',  --Change the date with invalid one or in the wrong format and it will be caught!
                           format_input => l_format,
                           refc_result_set => result_set);
   LOOP                      
     FETCH result_set INTO l_hall_no, l_showtime;
-    DBMS_OUTPUT.PUT_LINE('Hall No: '|| l_hall_no || ' Showtime: ' || l_showtime);
     EXIT WHEN result_set%NOTFOUND;
+    DBMS_OUTPUT.PUT_LINE('Hall No: '|| l_hall_no || ' Showtime: ' || l_showtime);
   END LOOP;
   EXCEPTION
     WHEN OTHERS THEN
@@ -102,8 +110,8 @@ BEGIN
                           refc_result_set => result_set);
   LOOP                      
     FETCH result_set INTO l_hall_no, l_showtime, l_format;
-    DBMS_OUTPUT.PUT_LINE('Hall No: '|| l_hall_no || ' Showtime: ' || l_showtime || ' Format: ' ||l_format||'D');
     EXIT WHEN result_set%NOTFOUND;
+    DBMS_OUTPUT.PUT_LINE('Hall No: '|| l_hall_no || ' Showtime: ' || l_showtime || ' Format: ' ||l_format||'D');
   END LOOP;
   EXCEPTION
     WHEN OTHERS THEN
