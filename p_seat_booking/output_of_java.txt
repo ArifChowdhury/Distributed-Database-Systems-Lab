@@ -94,3 +94,16 @@ Price:	450
 
 Hall-no: 2 | Format: 3
 Price:	400
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PROCEDURE: book_seats -> returns: newly-entered-PURCHASEID
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+>>User: auzchowdhury,auzchowdhury@Gmail.com,02557446802 ||| Tickets: LE36,UB15,LA51 
+>>Date: 31-JUL-2016 ||| Time: 05: 00 PM ||| HallNo: 5 ||| MovieId: 6 ||| Format: 3
+New PurchaseID: 151
+
+
+>>User: auzchowdhury,auzchowdhury@Gmail.com,02557446802 ||| Tickets: LE36,UB15,LA51 
+>>Date: 31-JUL-2016 ||| Time: 05: 00 PM ||| HallNo: 5 ||| MovieId: 6 ||| Format: 3
+ORA-20007: Illegal attempt to reserve seats since one or all of the selected seats are already reserved.

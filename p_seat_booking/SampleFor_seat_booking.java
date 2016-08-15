@@ -86,6 +86,50 @@ public class SampleFor_seat_booking {
 
 		System.out.println("\nHall-no: 2 | Format: 3");
 		getTicketPrice(2, 3);
+
+		System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		System.out.println("\tPROCEDURE: book_seats -> returns: newly-entered-PURCHASEID");
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+
+		System.out.println(">>User: auzchowdhury,auzchowdhury@Gmail.com,02557446802 ||| Tickets: LE36,UB15,LA51 \n>>Date: 31-JUL-2016 ||| Time: 05: 00 PM ||| HallNo: 5 ||| MovieId: 6 ||| Format: 3");
+		bookSeats("auzchowdhury,auzchowdhury@Gmail.com,02557446802", "LE36,UB15,LA51", "31-JUL-2016", "05: 00 PM", 5, 6, 3);
+		System.out.println("\n\n>>User: auzchowdhury,auzchowdhury@Gmail.com,02557446802 ||| Tickets: LE36,UB15,LA51 \n>>Date: 31-JUL-2016 ||| Time: 05: 00 PM ||| HallNo: 5 ||| MovieId: 6 ||| Format: 3");
+		bookSeats("auzchowdhury,auzchowdhury@Gmail.com,02557446802", "LE36,UB15,LA51", "31-JUL-2016", "05: 00 PM", 5, 6, 3);//<-- Will throw an EXCEPTION
+
+	}
+
+	private static void bookSeats(String customerData, String seatsToBook, String showDate, String showTime, int hallNo, int movieId, int movieFormat) {
+		try{
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			Connection conn = DriverManager.getConnection ("jdbc:oracle:thin:@localhost:1521:xe", "MOVIE","MOVIE");
+			CallableStatement call = null;
+			/*seat_booking.book_seats(cust_data => 'auzchowdhury,auzchowdhury@Gmail.com,02557446802',
+		            seats_list => 'LE36,UB15,LA51',
+		            show_date => '31-JUL-2016',
+		            show_time => '05: 00 PM',
+		            hall_no => 5,
+		            movie_id => 6,
+		            movie_format => 3,
+		            p_new_purchase_id => l_id);*/
+			call = conn.prepareCall ("{ call seat_booking.book_seats( '"+customerData+"',"
+					+ " '"+seatsToBook+"',"
+					+ " '"+showDate+"',"
+					+ " '"+showTime+"',"
+					+ " "+hallNo+","
+					+ " "+movieId+","
+					+ " "+movieFormat+","
+					+ " ?)}");
+			call.registerOutParameter (1, OracleTypes.INTEGER);
+			call.execute ();
+			System.out.println("New PurchaseID: "+call.getInt(1));
+			call.close();
+			conn.close();
+		}catch (SQLException  e) {
+			printSQLERRM(e);
+		}catch (Exception e) {
+			System.out.println(e.getLocalizedMessage());
+		}
+
 	}
 
 	private static void getTicketPrice(int hallNo, int format) {
@@ -223,6 +267,8 @@ public class SampleFor_seat_booking {
 			System.out.println("ORA-20004: The time inserted is not in the correct format. The correct format is 'HH: MI AM' e.g. '11: 40 AM'.");
 		else if(e.getErrorCode() == 20006)
 			System.out.println("ORA-20006: The time is not valid.");
+		else if(e.getErrorCode() == 20007)
+			System.out.println("ORA-20007: Illegal attempt to reserve seats since one or all of the selected seats are already reserved.");
 		else
 			System.out.println(e.getLocalizedMessage());
 	}

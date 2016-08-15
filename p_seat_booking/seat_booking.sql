@@ -24,7 +24,8 @@ PACKAGE seat_booking AS
                                       hall_no BOOKED_SEATS.HALLNO%TYPE,
                                       movie_id IN PURCHASE_TICKETS.MOVIEID%TYPE,
                                       movie_format IN PURCHASE_TICKETS.FORMAT%TYPE,
-                                      new_purchase_ticket OUT SYS_REFCURSOR);
+                                      --p_new_purchase_ticket OUT SYS_REFCURSOR);
+                                      p_new_purchase_id OUT PURCHASE_TICKETS.CUSTOMERID%TYPE);
 END seat_booking;
 /
 CREATE OR REPLACE
@@ -193,14 +194,16 @@ PACKAGE BODY seat_booking AS
                                       hall_no BOOKED_SEATS.HALLNO%TYPE,
                                       movie_id IN PURCHASE_TICKETS.MOVIEID%TYPE,
                                       movie_format IN PURCHASE_TICKETS.FORMAT%TYPE,
-                                      new_purchase_ticket OUT SYS_REFCURSOR) AS
+                                      --p_new_purchase_ticket OUT SYS_REFCURSOR);
+                                      p_new_purchase_id OUT PURCHASE_TICKETS.CUSTOMERID%TYPE)AS
     ex_bad_attempt_to_book_seats EXCEPTION;
     PRAGMA EXCEPTION_INIT( ex_bad_attempt_to_book_seats, -20008 );
+    temp_new_purchase_ID PURCHASE_TICKETS.PURCHASEID%TYPE;
     l_all_seats_available NUMBER(1);
     l_today_date DATE := SYSDATE;
     l_cust_res_row SYS_REFCURSOR;
     l_cust_row CUSTOMERS%ROWTYPE;
-    l_purchase_tkt SYS_REFCURSOR;
+    new_purchase_ticket SYS_REFCURSOR;
     l_booked_seats_cs SYS_REFCURSOR;
     l_unavailable_seats VARCHAR2(250);
     l_purchase_tkt_row PURCHASE_TICKETS%ROWTYPE;
@@ -247,15 +250,24 @@ PACKAGE BODY seat_booking AS
         seat_array := apex_util.string_to_table(seats_list, ',');
         FOR i IN 1..seat_array.COUNT
         LOOP
-        l_booked_seats_data := seat_array(i)||','||TO_CHAR(TO_DATE(show_date|| ' ' ||show_time, 'DD-MON-YYYY HH12:MI AM'), 'DD-MON-YYYY HH24:MI:SS')
-        ||','||hall_no||','||l_purchase_tkt_row.PURCHASEID;
-        edit_data.insert_row(table_name => 'BOOKED_SEATS',
-                  input_data => l_booked_seats_data,
-                  new_row => l_booked_seats_cs);
-        --new_purchase_ticket := l_purchase_tkt;
+          l_booked_seats_data := seat_array(i)||','||TO_CHAR(TO_DATE(show_date|| ' ' ||show_time, 'DD-MON-YYYY HH12:MI AM'), 'DD-MON-YYYY HH24:MI:SS')
+          ||','||hall_no||','||l_purchase_tkt_row.PURCHASEID;
+          edit_data.insert_row(table_name => 'BOOKED_SEATS',
+                    input_data => l_booked_seats_data,
+                    new_row => l_booked_seats_cs);
+          --new_purchase_ticket := l_purchase_tkt;
         END LOOP;
+        --| Preparing the newly entered row to be returned |--
+        temp_new_purchase_ID := l_purchase_tkt_row.PURCHASEID;
+        --DBMS_OUTPUT.PUT_LINE('New ID: '||temp_new_purchase_ID);
+        /*OPEN p_new_purchase_ticket FOR
+        SELECT * 
+        FROM PURCHASE_TICKETS
+        WHERE PURCHASEID = temp_new_purchase_ID;*/
+        p_new_purchase_id := temp_new_purchase_ID;
     ELSE
       RAISE_APPLICATION_ERROR( -20007, 'Illegal attempt to reserve seats since one or all of the selected seats are already reserved.' );
+      p_new_purchase_id := 0;
     END IF;
   END book_seats;
 END seat_booking;
@@ -264,6 +276,17 @@ END seat_booking;
 SET SERVEROUTPUT ON;
 DECLARE
   res_cursor SYS_REFCURSOR;
+  l_id PURCHASE_TICKETS.PURCHASEID%TYPE;
+  l_cust_id PURCHASE_TICKETS.CUSTOMERID%TYPE;
+  l_show_date_time PURCHASE_TICKETS.SHOWDATETIME%TYPE;
+  l_hall_no PURCHASE_TICKETS.HALLNO%TYPE;
+  l_category NUMBER(1,0);
+  l_format PURCHASE_TICKETS.FORMAT%TYPE;
+  l_num_of_tickets PURCHASE_TICKETS.TOTALTICKETS%TYPE;
+  l_total_cost PURCHASE_TICKETS.TOTALCOST%TYPE;
+  l_purchase_date PURCHASE_TICKETS.PURCHASEDATE%TYPE;
+  l_movie_id PURCHASE_TICKETS.MOVIEID%TYPE;
+  
   l_new_purchase_ticket_row PURCHASE_TICKETS%ROWTYPE;
 BEGIN
   seat_booking.book_seats(cust_data => 'auzchowdhury,auzchowdhury@Gmail.com,02557446802',
@@ -273,22 +296,24 @@ BEGIN
             hall_no => 5,
             movie_id => 6,
             movie_format => 3,
-            new_purchase_ticket => res_cursor);
-  LOOP
-    FETCH res_cursor INTO l_new_purchase_ticket_row;
+            p_new_purchase_id => l_id);
+    DBMS_OUTPUT.PUT('The returned ID: '|| l_id);
+  /*LOOP
+    FETCH res_cursor INTO l_id, l_cust_id, l_show_date_time, l_hall_no, l_category, l_format, l_num_of_tickets, l_total_cost, l_purchase_date, l_movie_id;
     EXIT WHEN res_cursor%NOTFOUND;
-    DBMS_OUTPUT.PUT('PurchaseId: '||l_new_purchase_ticket_row.PURCHASEID
-    ||Chr(10)||'CustomerId: '||l_new_purchase_ticket_row.CUSTOMERID
-    ||Chr(10)||'ShowDateTime: ' ||l_new_purchase_ticket_row.SHOWDATETIME
-    ||Chr(10)||'Hall-no: ' ||l_new_purchase_ticket_row.HALLNO
-    ||Chr(10)||'Category: ' ||l_new_purchase_ticket_row.CATEGORY
-    ||Chr(10)||'Format: ' ||l_new_purchase_ticket_row.FORMAT
-    ||Chr(10)||'Number-of-tickets: '||l_new_purchase_ticket_row.TOTALTICKETS
-    ||Chr(10)||'Total cost: '||l_new_purchase_ticket_row.TOTALCOST
-    ||Chr(10)||'Purchse date:'||l_new_purchase_ticket_row.PURCHASEDATE
-    ||Chr(10)||'MovieId: '||l_new_purchase_ticket_row.MOVIEID
+    DBMS_OUTPUT.PUT('OK');
+    DBMS_OUTPUT.PUT('PurchaseId: '||l_id
+    ||Chr(10)||'CustomerId: '||l_cust_id
+    ||Chr(10)||'ShowDateTime: ' ||l_show_date_time
+    ||Chr(10)||'Hall-no: ' ||l_hall_no
+    ||Chr(10)||'Category: ' ||l_category
+    ||Chr(10)||'Format: ' ||l_format
+    ||Chr(10)||'Number-of-tickets: '||l_num_of_tickets
+    ||Chr(10)||'Total cost: '||l_total_cost
+    ||Chr(10)||'Purchse date:'||l_purchase_date
+    ||Chr(10)||'MovieId: '||l_movie_id
     );
-  END LOOP;
+  END LOOP;*/
   EXCEPTION
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE(SQLERRM);
