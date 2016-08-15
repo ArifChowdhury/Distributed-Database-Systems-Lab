@@ -12,7 +12,7 @@ All the public PROCEDURE(s) are listed below:
 10. seat_booking.is_hall_full(p_show_date IN.., p_show_time IN.., p_hall_no IN.., p_housefull OUT..)
 11. seat_booking.is_seat_available(p_show_date IN.., p_show_time IN.., p_hall_no IN.., p_seat_no IN.., p_availability OUT..)
 12. seat_booking.are_seats_available(show_date IN.., show_time IN.., hall_no IN.., seat_no_list IN.., availability OUT.., already_booked_seats OUT..)
-13. seat_booking.book_seats(cust_data IN.., seats_list IN.., show_date IN.., show_time IN.., hall_no IN..,movie_id IN.., movie_format IN.., new_purchase_ticket OUT..) 
+13. seat_booking.book_seats(cust_data IN.., seats_list IN.., show_date IN.., show_time IN.., hall_no IN..,movie_id IN.., movie_format IN.., p_new_purchase_id OUT..) 
 14. seat_booking.get_ticket_price(p_hall_no IN.., p_format IN.., p_ticket_price OUT..)
 15. util.is_time_valid(p_time IN.., p_validity OUT..)
 16. util.is_date_format_valid(p_date IN.., p_validity OUT..)
