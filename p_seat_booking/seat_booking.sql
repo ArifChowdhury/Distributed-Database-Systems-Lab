@@ -17,6 +17,14 @@ PACKAGE seat_booking AS
                             availability OUT NUMBER,
                             already_booked_seats OUT VARCHAR2);
   PROCEDURE get_ticket_price(p_hall_no IN CINEMA_HALLS.HALLNO%TYPE, p_format IN TICKET_PRICES.FORMAT%TYPE, p_ticket_price OUT TICKET_PRICES.PRICE%TYPE);
+  PROCEDURE book_seats(cust_data IN VARCHAR2,
+                                      seats_list IN VARCHAR2,
+                                      show_date IN VARCHAR2,
+                                      show_time IN VARCHAR2,
+                                      hall_no BOOKED_SEATS.HALLNO%TYPE,
+                                      movie_id IN PURCHASE_TICKETS.MOVIEID%TYPE,
+                                      movie_format IN PURCHASE_TICKETS.FORMAT%TYPE,
+                                      new_purchase_ticket OUT SYS_REFCURSOR);
 END seat_booking;
 /
 CREATE OR REPLACE
@@ -178,8 +186,115 @@ PACKAGE BODY seat_booking AS
       WHERE CINEMA_HALLS.HALLNO = p_hall_no
       AND TICKET_PRICES.FORMAT = p_format;
   END get_ticket_price;
+  PROCEDURE book_seats(cust_data IN VARCHAR2,
+                                      seats_list IN VARCHAR2,
+                                      show_date IN VARCHAR2,
+                                      show_time IN VARCHAR2,
+                                      hall_no BOOKED_SEATS.HALLNO%TYPE,
+                                      movie_id IN PURCHASE_TICKETS.MOVIEID%TYPE,
+                                      movie_format IN PURCHASE_TICKETS.FORMAT%TYPE,
+                                      new_purchase_ticket OUT SYS_REFCURSOR) AS
+    ex_bad_attempt_to_book_seats EXCEPTION;
+    PRAGMA EXCEPTION_INIT( ex_bad_attempt_to_book_seats, -20008 );
+    l_all_seats_available NUMBER(1);
+    l_today_date DATE := SYSDATE;
+    l_cust_res_row SYS_REFCURSOR;
+    l_cust_row CUSTOMERS%ROWTYPE;
+    l_purchase_tkt SYS_REFCURSOR;
+    l_booked_seats_cs SYS_REFCURSOR;
+    l_unavailable_seats VARCHAR2(250);
+    l_purchase_tkt_row PURCHASE_TICKETS%ROWTYPE;
+    l_category PURCHASE_TICKETS.CATEGORY%TYPE;
+    l_ticket_price TICKET_PRICES.PRICE%TYPE; 
+    l_total_cost NUMBER := 0;
+    l_num_of_seats NUMBER;
+    l_purchase_ticket_data VARCHAR2(500);
+    l_booked_seats_data VARCHAR2(200);
+    seat_array apex_application_global.vc_arr2;
+  BEGIN
+    --| Verify if the selected seats are available ||--
+    seat_booking.are_seats_available(show_date => TO_DATE(show_date, 'DD-MON-YY'),
+                      show_time => show_time,
+                      hall_no => hall_no,
+                      seat_no_list => seats_list,
+                      availability => l_all_seats_available,
+                      already_booked_seats => l_unavailable_seats);
+    IF l_all_seats_available = 1 THEN
+        --| Fetching CUSTOMERID |--
+        edit_data.get_reflection(p_table_name => 'CUSTOMERS', p_data => cust_data, reflected_row => l_cust_res_row);
+        FETCH l_cust_res_row INTO l_cust_row;
+        --| Fetching CATEGORY |--
+        SELECT CATEGORY INTO l_category
+        FROM CINEMA_HALLS WHERE HALLNO = hall_no;
+        --| Fetching TOTALTICKETS |--
+        l_num_of_seats := REGEXP_COUNT(seats_list, ',')+1;
+        --| Calculating TOTALCOST |--
+        seat_array := apex_util.string_to_table(seats_list, ',');
+        FOR i IN 1..seat_array.COUNT
+        LOOP
+          seat_booking.get_ticket_price(p_hall_no => hall_no,
+                       p_format => movie_format, 
+                       p_ticket_price => l_ticket_price);
+          l_total_cost := l_total_cost +  l_ticket_price;
+        END LOOP;
+        l_purchase_ticket_data := l_cust_row.customerId||','||TO_CHAR(TO_DATE(show_date|| ' ' ||show_time, 'DD-MON-YYYY HH12:MI AM'), 'DD-MON-YYYY HH24:MI:SS')
+        ||','||hall_no||','||l_category||','||movie_format||','||l_num_of_seats||','||l_total_cost||','||TO_CHAR(l_today_date, 'DD-MON-YYYY HH24:MI:SS')||','||movie_id;
+        edit_data.insert_row(table_name => 'PURCHASE_TICKETS',
+                  input_data => l_purchase_ticket_data,
+                  new_row => new_purchase_ticket);
+        --| Getting the PURCHASE_TICKETS.PURCHASEID |--
+        FETCH new_purchase_ticket INTO l_purchase_tkt_row;
+        seat_array := apex_util.string_to_table(seats_list, ',');
+        FOR i IN 1..seat_array.COUNT
+        LOOP
+        l_booked_seats_data := seat_array(i)||','||TO_CHAR(TO_DATE(show_date|| ' ' ||show_time, 'DD-MON-YYYY HH12:MI AM'), 'DD-MON-YYYY HH24:MI:SS')
+        ||','||hall_no||','||l_purchase_tkt_row.PURCHASEID;
+        edit_data.insert_row(table_name => 'BOOKED_SEATS',
+                  input_data => l_booked_seats_data,
+                  new_row => l_booked_seats_cs);
+        --new_purchase_ticket := l_purchase_tkt;
+        END LOOP;
+    ELSE
+      RAISE_APPLICATION_ERROR( -20007, 'Illegal attempt to reserve seats since one or all of the selected seats are already reserved.' );
+    END IF;
+  END book_seats;
 END seat_booking;
 /
+--||Testing book_seat ||--
+SET SERVEROUTPUT ON;
+DECLARE
+  res_cursor SYS_REFCURSOR;
+  l_new_purchase_ticket_row PURCHASE_TICKETS%ROWTYPE;
+BEGIN
+  seat_booking.book_seats(cust_data => 'auzchowdhury,auzchowdhury@Gmail.com,02557446802',
+            seats_list => 'LE36,UB15,LA51',
+            show_date => '31-JUL-2016',
+            show_time => '05: 00 PM',
+            hall_no => 5,
+            movie_id => 6,
+            movie_format => 3,
+            new_purchase_ticket => res_cursor);
+  LOOP
+    FETCH res_cursor INTO l_new_purchase_ticket_row;
+    EXIT WHEN res_cursor%NOTFOUND;
+    DBMS_OUTPUT.PUT('PurchaseId: '||l_new_purchase_ticket_row.PURCHASEID
+    ||Chr(10)||'CustomerId: '||l_new_purchase_ticket_row.CUSTOMERID
+    ||Chr(10)||'ShowDateTime: ' ||l_new_purchase_ticket_row.SHOWDATETIME
+    ||Chr(10)||'Hall-no: ' ||l_new_purchase_ticket_row.HALLNO
+    ||Chr(10)||'Category: ' ||l_new_purchase_ticket_row.CATEGORY
+    ||Chr(10)||'Format: ' ||l_new_purchase_ticket_row.FORMAT
+    ||Chr(10)||'Number-of-tickets: '||l_new_purchase_ticket_row.TOTALTICKETS
+    ||Chr(10)||'Total cost: '||l_new_purchase_ticket_row.TOTALCOST
+    ||Chr(10)||'Purchse date:'||l_new_purchase_ticket_row.PURCHASEDATE
+    ||Chr(10)||'MovieId: '||l_new_purchase_ticket_row.MOVIEID
+    );
+  END LOOP;
+  EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;
+/
+
 --|| Testing get_ticket_price ||--
 SET SERVEROUTPUT ON;
 DECLARE

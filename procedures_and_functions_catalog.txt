@@ -1,7 +1,7 @@
 All the public PROCEDURE(s) are listed below:
 
-01. edit_data.insert_row(table_name IN.., input_data IN.., new_row OUT..)  //<-- Right now it only works for CUSTOMERS table.
-02. edit_data.get_reflection(p_table_name IN.., p_data IN.., reflected_row OUT..)//<-- Right now it only works for CUSTOMERS table.
+01. edit_data.insert_row(table_name IN.., input_data IN.., new_row OUT..)
+02. edit_data.get_reflection(p_table_name IN.., p_data IN.., reflected_row OUT..)
 03. p_get_schedule.for_date(date_input IN.., refc_result_set OUT..)
 04. p_get_schedule.for_movie(movie_name IN.., date_input IN.., refc_result_set OUT..)
 05. p_get_schedule.for_movie(movie_name IN.., date_input IN.., format_input IN.., refc_result_set OUT..)
@@ -12,11 +12,12 @@ All the public PROCEDURE(s) are listed below:
 10. seat_booking.is_hall_full(p_show_date IN.., p_show_time IN.., p_hall_no IN.., p_housefull OUT..)
 11. seat_booking.is_seat_available(p_show_date IN.., p_show_time IN.., p_hall_no IN.., p_seat_no IN.., p_availability OUT..)
 12. seat_booking.are_seats_available(show_date IN.., show_time IN.., hall_no IN.., seat_no_list IN.., availability OUT.., already_booked_seats OUT..)
-13. seat_booking.get_ticket_price(p_hall_no IN.., p_format IN.., p_ticket_price OUT..)
-14. util.is_time_valid(p_time IN.., p_validity OUT..)
-15. util.is_date_format_valid(p_date IN.., p_validity OUT..)
-16. util.is_time_format_valid(p_time IN.., p_validity OUT..)
-17. util.expn_handle_date_and_time(p_date_in IN.., p_time_in IN..)
+13. seat_booking.book_seats(cust_data IN.., seats_list IN.., show_date IN.., show_time IN.., hall_no IN..,movie_id IN.., movie_format IN.., new_purchase_ticket OUT..) 
+14. seat_booking.get_ticket_price(p_hall_no IN.., p_format IN.., p_ticket_price OUT..)
+15. util.is_time_valid(p_time IN.., p_validity OUT..)
+16. util.is_date_format_valid(p_date IN.., p_validity OUT..)
+17. util.is_time_format_valid(p_time IN.., p_validity OUT..)
+18. util.expn_handle_date_and_time(p_date_in IN.., p_time_in IN..)
 
 
 All the public FUNCTION(s) are listed below:
