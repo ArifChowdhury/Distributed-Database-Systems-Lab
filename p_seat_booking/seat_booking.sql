@@ -225,7 +225,7 @@ PACKAGE BODY seat_booking AS
   IF NOT l_schedule_valid = 1 THEN
     RAISE_APPLICATION_ERROR( -20009, 'There is no such schedule for the movie inserted.' ); 
   ELSE
-    DBMS_OUTPUT.PUT_LINE('Schedule-valid.');
+    --DBMS_OUTPUT.PUT_LINE('Schedule-valid.');
     --| Verify if the selected seats are available ||--
     seat_booking.are_seats_available(show_date => TO_DATE(show_date, 'DD-MON-YY'),
                       show_time => show_time,
@@ -234,7 +234,7 @@ PACKAGE BODY seat_booking AS
                       availability => l_all_seats_available,
                       already_booked_seats => l_unavailable_seats);
     IF l_all_seats_available = 1 THEN
-        DBMS_OUTPUT.PUT_LINE('Seats-valid.');
+        --DBMS_OUTPUT.PUT_LINE('Seats-valid.');
         --| Collecting moive_id |--
         SELECT MOVIES.MOVIEID INTO l_movie_id FROM MOVIES WHERE MOVIES.MOVIENAME = movie_name; 
         DBMS_OUTPUT.PUT_LINE('Movie-id: ' || l_movie_id);
