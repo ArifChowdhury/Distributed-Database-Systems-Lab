@@ -91,32 +91,26 @@ public class SampleFor_seat_booking {
 		System.out.println("\tPROCEDURE: book_seats -> returns: newly-entered-PURCHASEID");
 		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 
-		System.out.println(">>User: auzchowdhury,auzchowdhury@Gmail.com,02557446802 ||| Tickets: LE36,UB15,LA51 \n>>Date: 31-JUL-2016 ||| Time: 05: 00 PM ||| HallNo: 5 ||| MovieId: 6 ||| Format: 3");
-		bookSeats("auzchowdhury,auzchowdhury@Gmail.com,02557446802", "LE36,UB15,LA51", "31-JUL-2016", "05: 00 PM", 5, 6, 3);
-		System.out.println("\n\n>>User: auzchowdhury,auzchowdhury@Gmail.com,02557446802 ||| Tickets: LE36,UB15,LA51 \n>>Date: 31-JUL-2016 ||| Time: 05: 00 PM ||| HallNo: 5 ||| MovieId: 6 ||| Format: 3");
-		bookSeats("auzchowdhury,auzchowdhury@Gmail.com,02557446802", "LE36,UB15,LA51", "31-JUL-2016", "05: 00 PM", 5, 6, 3);//<-- Will throw an EXCEPTION
+		//Note: Now it intakes movieName instead of movieId
+		System.out.println("\n\n>>User: auzchowdhury,auzchowdhury@Gmail.com,02557446802 ||| Tickets: LE36,UB15,LA51 \n>>Date: 04-AUG-2016 ||| Time: 05: 00 PM ||| HallNo: 5 ||| MovieName: 'The Godfather' ||| Format: 2");
+		bookSeats("auzchowdhury,auzchowdhury@Gmail.com,02557446802", "LE36,UB15,LA51", "04-AUG-2016", "05: 00 PM", 5, "The Godfather", 2);
+
+		System.out.println("\n\n>>User: auzchowdhury,auzchowdhury@Gmail.com,02557446802 ||| Tickets: LE36,UB15,LA51 \n>>Date: 31-JUL-2016 ||| Time: 11: 30 AM ||| HallNo: 6 ||| MovieName: 'The Godfather' ||| Format: 3");
+		bookSeats("auzchowdhury,auzchowdhury@Gmail.com,02557446802", "LE36,UB15,LA51", "31-JUL-2016", "11: 30 AM", 6, "The Godfather", 3);//<-- Will throw an EXCEPTION
 
 	}
 
-	private static void bookSeats(String customerData, String seatsToBook, String showDate, String showTime, int hallNo, int movieId, int movieFormat) {
+	private static void bookSeats(String customerData, String seatsToBook, String showDate, String showTime, int hallNo, String movieName, int movieFormat) {
 		try{
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			Connection conn = DriverManager.getConnection ("jdbc:oracle:thin:@localhost:1521:xe", "MOVIE","MOVIE");
 			CallableStatement call = null;
-			/*seat_booking.book_seats(cust_data => 'auzchowdhury,auzchowdhury@Gmail.com,02557446802',
-		            seats_list => 'LE36,UB15,LA51',
-		            show_date => '31-JUL-2016',
-		            show_time => '05: 00 PM',
-		            hall_no => 5,
-		            movie_id => 6,
-		            movie_format => 3,
-		            p_new_purchase_id => l_id);*/
 			call = conn.prepareCall ("{ call seat_booking.book_seats( '"+customerData+"',"
 					+ " '"+seatsToBook+"',"
 					+ " '"+showDate+"',"
 					+ " '"+showTime+"',"
 					+ " "+hallNo+","
-					+ " "+movieId+","
+					+ " '"+movieName+"',"
 					+ " "+movieFormat+","
 					+ " ?)}");
 			call.registerOutParameter (1, OracleTypes.INTEGER);
@@ -269,6 +263,8 @@ public class SampleFor_seat_booking {
 			System.out.println("ORA-20006: The time is not valid.");
 		else if(e.getErrorCode() == 20007)
 			System.out.println("ORA-20007: Illegal attempt to reserve seats since one or all of the selected seats are already reserved.");
+		else if(e.getErrorCode() == 20009)
+			System.out.println("ORA-20009: There is no such schedule for the movie inserted.");
 		else
 			System.out.println(e.getLocalizedMessage());
 	}

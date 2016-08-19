@@ -6,3 +6,4 @@ SQLERRM 20005: ex_invalid_seat_no
 SQLERRM 20006: ex_invalid_time
 SQLERRM 20007: ex_not_enough_CUSTOMERS_data
 SQLERRM 20008: ex_bad_attempt_to_book_seats
+SQLERRM 20009: ex_invalid_movie_schedule

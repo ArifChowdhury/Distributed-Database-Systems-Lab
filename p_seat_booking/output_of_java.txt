@@ -48,7 +48,7 @@ ORA-20004: The time inserted is not in the correct format. The correct format is
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 On the 31-JUL-16 at 11: 40 AM, is there any available seats left in the Hall-No 6?
-	Yes
+	No
 On the 31-JUL-16 at 11: 40 AM, is there any available seats left in the Hall-No 1?
 	No
 On the 31-JUL-16 at 11: 40 am, is there any available seats left in the Hall-No 6?
@@ -99,11 +99,13 @@ Price:	400
 	PROCEDURE: book_seats -> returns: newly-entered-PURCHASEID
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
->>User: auzchowdhury,auzchowdhury@Gmail.com,02557446802 ||| Tickets: LE36,UB15,LA51 
->>Date: 31-JUL-2016 ||| Time: 05: 00 PM ||| HallNo: 5 ||| MovieId: 6 ||| Format: 3
-New PurchaseID: 151
 
 
 >>User: auzchowdhury,auzchowdhury@Gmail.com,02557446802 ||| Tickets: LE36,UB15,LA51 
->>Date: 31-JUL-2016 ||| Time: 05: 00 PM ||| HallNo: 5 ||| MovieId: 6 ||| Format: 3
-ORA-20007: Illegal attempt to reserve seats since one or all of the selected seats are already reserved.
+>>Date: 04-AUG-2016 ||| Time: 05: 00 PM ||| HallNo: 5 ||| MovieName: 'The Godfather' ||| Format: 2
+New PurchaseID: 162
+
+
+>>User: auzchowdhury,auzchowdhury@Gmail.com,02557446802 ||| Tickets: LE36,UB15,LA51 
+>>Date: 31-JUL-2016 ||| Time: 11: 30 AM ||| HallNo: 6 ||| MovieName: 'The Godfather' ||| Format: 3
+ORA-20009: There is no such schedule for the movie inserted.

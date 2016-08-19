@@ -3,6 +3,17 @@ CREATE OR REPLACE PACKAGE util AS
   PROCEDURE is_date_format_valid(p_date IN VARCHAR2, p_validity OUT NUMBER);
   PROCEDURE is_time_format_valid(p_time IN VARCHAR2, p_validity OUT NUMBER);
   PROCEDURE expn_handle_date_and_time(p_date_in IN VARCHAR2, p_time_in IN VARCHAR2);
+  FUNCTION is_the_movie_schedule_valid(p_movie_name IN MOVIES.MOVIENAME%TYPE,
+                                            p_show_date IN VARCHAR2,
+                                            p_show_time IN VARCHAR2,
+                                            p_movie_format IN SHOW_TIMES.FORMAT%TYPE,
+                                            p_hall_no IN SHOW_TIMES.HALLNO%TYPE)
+  RETURN NUMBER;
+  PROCEDURE expn_validate_schedule_format(movie_name IN MOVIES.MOVIENAME%TYPE,
+                                                          show_date IN varchar2,
+                                                          show_time IN varchar2,
+                                                          movie_format IN SHOW_TIMES.FORMAT%TYPE,
+                                                          hall_no IN SHOW_TIMES.HALLNO%TYPE);
 END util;
 /
 
@@ -61,8 +72,71 @@ CREATE OR REPLACE PACKAGE BODY util AS
   END IF;
   
  END expn_handle_date_and_time;
+ FUNCTION is_the_movie_schedule_valid(p_movie_name IN MOVIES.MOVIENAME%TYPE,
+                                            p_show_date IN VARCHAR2,
+                                            p_show_time IN VARCHAR2,
+                                            p_movie_format IN SHOW_TIMES.FORMAT%TYPE,
+                                            p_hall_no IN SHOW_TIMES.HALLNO%TYPE)
+  RETURN NUMBER AS
+    l_playing NUMBER(1) := 0;
+    l_row_count NUMBER;
+  BEGIN
+    UTIL.EXPN_HANDLE_DATE_AND_TIME(p_show_date, p_show_time);
+    SELECT COUNT(*) INTO l_row_count
+      FROM MOVIES JOIN SHOW_TIMES 
+        ON MOVIES.MOVIEID = SHOW_TIMES.MOVIEID
+      WHERE MOVIES.MOVIENAME = p_movie_name
+      AND SHOW_TIMES.HALLNO = p_hall_no
+      AND TO_DATE(SHOW_TIMES.SHOWDATETIME, 'DD-MON-YY') = TO_DATE(p_show_date, 'DD-MON-YY')
+      AND TO_CHAR(SHOW_TIMES.SHOWDATETIME, 'HH12: MI AM')  = p_show_time
+      AND SHOW_TIMES.FORMAT =  p_movie_format;
+    
+    IF l_row_count >0 THEN
+      l_playing := 1;
+    ELSE
+      l_playing := 0;
+    END IF;
+    RETURN l_playing;
+  END is_the_movie_schedule_valid;
+ PROCEDURE expn_validate_schedule_format(movie_name IN MOVIES.MOVIENAME%TYPE,
+                                                          show_date IN varchar2,
+                                                          show_time IN varchar2,
+                                                          movie_format IN SHOW_TIMES.FORMAT%TYPE,
+                                                          hall_no IN SHOW_TIMES.HALLNO%TYPE) AS
+  ex_invalid_movie_schedule EXCEPTION;
+  PRAGMA EXCEPTION_INIT( ex_invalid_movie_schedule, -20009 );
+  l_result NUMBER(1);
+  BEGIN
+  --DBMS_OUTPUT.PUT_LINE('Movie-name: '||movie_name || ' show-date: '|| show_date || ' show-time: ' || show_time || 'movie-format: ' || movie_format || ' hall-no: ' || hall_no);
+  l_result := is_the_movie_schedule_valid(p_movie_name => movie_name,
+                              p_show_date => show_date,
+                              p_show_time => show_time,
+                              p_movie_format => movie_format,
+                              p_hall_no => hall_no);
+  
+  IF NOT l_result = 1 THEN
+    RAISE_APPLICATION_ERROR( -20009, 'There is no such schedule for the movie inserted.' ); 
+  END IF;
+   EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE(SQLERRM);
+  
+  END expn_validate_schedule_format;
 END util;
 /
+--|| Testing expn_validate_schedule_format ||--
+SET SERVEROUTPUT ON;
+BEGIN
+  util.expn_validate_schedule_format(movie_name => 'The Godfather',
+                                     show_date => '31-JUL-16',
+                                     show_time => '11: 40 AM',
+                                     movie_format => 2,
+                                     hall_no => 6);
+  EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;
+/  
 
 --|| Testing util.expn_handle_date_and_time ||--
 SET SERVEROUTPUT ON;

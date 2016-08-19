@@ -17,15 +17,14 @@ PACKAGE seat_booking AS
                             availability OUT NUMBER,
                             already_booked_seats OUT VARCHAR2);
   PROCEDURE get_ticket_price(p_hall_no IN CINEMA_HALLS.HALLNO%TYPE, p_format IN TICKET_PRICES.FORMAT%TYPE, p_ticket_price OUT TICKET_PRICES.PRICE%TYPE);
-  PROCEDURE book_seats(cust_data IN VARCHAR2,
-                                      seats_list IN VARCHAR2,
-                                      show_date IN VARCHAR2,
-                                      show_time IN VARCHAR2,
-                                      hall_no BOOKED_SEATS.HALLNO%TYPE,
-                                      movie_id IN PURCHASE_TICKETS.MOVIEID%TYPE,
-                                      movie_format IN PURCHASE_TICKETS.FORMAT%TYPE,
-                                      --p_new_purchase_ticket OUT SYS_REFCURSOR);
-                                      p_new_purchase_id OUT PURCHASE_TICKETS.CUSTOMERID%TYPE);
+  PROCEDURE book_seats( cust_data IN VARCHAR2,
+                        seats_list IN VARCHAR2,
+                        show_date IN VARCHAR2,
+                        show_time IN VARCHAR2,
+                        hall_no BOOKED_SEATS.HALLNO%TYPE,
+                        movie_name IN MOVIES.MOVIENAME%TYPE,
+                        movie_format IN PURCHASE_TICKETS.FORMAT%TYPE,
+                        p_new_purchase_id OUT PURCHASE_TICKETS.CUSTOMERID%TYPE);
 END seat_booking;
 /
 CREATE OR REPLACE
@@ -192,9 +191,8 @@ PACKAGE BODY seat_booking AS
                                       show_date IN VARCHAR2,
                                       show_time IN VARCHAR2,
                                       hall_no BOOKED_SEATS.HALLNO%TYPE,
-                                      movie_id IN PURCHASE_TICKETS.MOVIEID%TYPE,
+                                      movie_name IN MOVIES.MOVIENAME%TYPE,
                                       movie_format IN PURCHASE_TICKETS.FORMAT%TYPE,
-                                      --p_new_purchase_ticket OUT SYS_REFCURSOR);
                                       p_new_purchase_id OUT PURCHASE_TICKETS.CUSTOMERID%TYPE)AS
     ex_bad_attempt_to_book_seats EXCEPTION;
     PRAGMA EXCEPTION_INIT( ex_bad_attempt_to_book_seats, -20008 );
@@ -213,8 +211,21 @@ PACKAGE BODY seat_booking AS
     l_num_of_seats NUMBER;
     l_purchase_ticket_data VARCHAR2(500);
     l_booked_seats_data VARCHAR2(200);
+    l_movie_id MOVIES.MOVIEID%TYPE;
     seat_array apex_application_global.vc_arr2;
+    l_schedule_valid NUMBER(1);
   BEGIN
+    --| Verify if the schedule is valid |--
+    l_schedule_valid := util.is_the_movie_schedule_valid(p_movie_name => movie_name,
+                                                    p_show_date => TO_DATE(show_date, 'DD-MON-YY'),
+                                                    p_show_time => show_time,
+                                                    p_movie_format => movie_format,
+                                                    p_hall_no => hall_no);
+  
+  IF NOT l_schedule_valid = 1 THEN
+    RAISE_APPLICATION_ERROR( -20009, 'There is no such schedule for the movie inserted.' ); 
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('Schedule-valid.');
     --| Verify if the selected seats are available ||--
     seat_booking.are_seats_available(show_date => TO_DATE(show_date, 'DD-MON-YY'),
                       show_time => show_time,
@@ -223,6 +234,10 @@ PACKAGE BODY seat_booking AS
                       availability => l_all_seats_available,
                       already_booked_seats => l_unavailable_seats);
     IF l_all_seats_available = 1 THEN
+        DBMS_OUTPUT.PUT_LINE('Seats-valid.');
+        --| Collecting moive_id |--
+        SELECT MOVIES.MOVIEID INTO l_movie_id FROM MOVIES WHERE MOVIES.MOVIENAME = movie_name; 
+        DBMS_OUTPUT.PUT_LINE('Movie-id: ' || l_movie_id);
         --| Fetching CUSTOMERID |--
         edit_data.get_reflection(p_table_name => 'CUSTOMERS', p_data => cust_data, reflected_row => l_cust_res_row);
         FETCH l_cust_res_row INTO l_cust_row;
@@ -241,7 +256,7 @@ PACKAGE BODY seat_booking AS
           l_total_cost := l_total_cost +  l_ticket_price;
         END LOOP;
         l_purchase_ticket_data := l_cust_row.customerId||','||TO_CHAR(TO_DATE(show_date|| ' ' ||show_time, 'DD-MON-YYYY HH12:MI AM'), 'DD-MON-YYYY HH24:MI:SS')
-        ||','||hall_no||','||l_category||','||movie_format||','||l_num_of_seats||','||l_total_cost||','||TO_CHAR(l_today_date, 'DD-MON-YYYY HH24:MI:SS')||','||movie_id;
+        ||','||hall_no||','||l_category||','||movie_format||','||l_num_of_seats||','||l_total_cost||','||TO_CHAR(l_today_date, 'DD-MON-YYYY HH24:MI:SS')||','||l_movie_id;
         edit_data.insert_row(table_name => 'PURCHASE_TICKETS',
                   input_data => l_purchase_ticket_data,
                   new_row => new_purchase_ticket);
@@ -260,60 +275,32 @@ PACKAGE BODY seat_booking AS
         --| Preparing the newly entered row to be returned |--
         temp_new_purchase_ID := l_purchase_tkt_row.PURCHASEID;
         --DBMS_OUTPUT.PUT_LINE('New ID: '||temp_new_purchase_ID);
-        /*OPEN p_new_purchase_ticket FOR
-        SELECT * 
-        FROM PURCHASE_TICKETS
-        WHERE PURCHASEID = temp_new_purchase_ID;*/
         p_new_purchase_id := temp_new_purchase_ID;
+        
     ELSE
       RAISE_APPLICATION_ERROR( -20007, 'Illegal attempt to reserve seats since one or all of the selected seats are already reserved.' );
       p_new_purchase_id := 0;
     END IF;
+  END IF;
+                                     
+    
   END book_seats;
 END seat_booking;
 /
 --||Testing book_seat ||--
 SET SERVEROUTPUT ON;
 DECLARE
-  res_cursor SYS_REFCURSOR;
   l_id PURCHASE_TICKETS.PURCHASEID%TYPE;
-  l_cust_id PURCHASE_TICKETS.CUSTOMERID%TYPE;
-  l_show_date_time PURCHASE_TICKETS.SHOWDATETIME%TYPE;
-  l_hall_no PURCHASE_TICKETS.HALLNO%TYPE;
-  l_category NUMBER(1,0);
-  l_format PURCHASE_TICKETS.FORMAT%TYPE;
-  l_num_of_tickets PURCHASE_TICKETS.TOTALTICKETS%TYPE;
-  l_total_cost PURCHASE_TICKETS.TOTALCOST%TYPE;
-  l_purchase_date PURCHASE_TICKETS.PURCHASEDATE%TYPE;
-  l_movie_id PURCHASE_TICKETS.MOVIEID%TYPE;
-  
-  l_new_purchase_ticket_row PURCHASE_TICKETS%ROWTYPE;
 BEGIN
-  seat_booking.book_seats(cust_data => 'auzchowdhury,auzchowdhury@Gmail.com,02557446802',
-            seats_list => 'LE36,UB15,LA51',
-            show_date => '31-JUL-2016',
-            show_time => '05: 00 PM',
-            hall_no => 5,
-            movie_id => 6,
-            movie_format => 3,
-            p_new_purchase_id => l_id);
-    DBMS_OUTPUT.PUT('The returned ID: '|| l_id);
-  /*LOOP
-    FETCH res_cursor INTO l_id, l_cust_id, l_show_date_time, l_hall_no, l_category, l_format, l_num_of_tickets, l_total_cost, l_purchase_date, l_movie_id;
-    EXIT WHEN res_cursor%NOTFOUND;
-    DBMS_OUTPUT.PUT('OK');
-    DBMS_OUTPUT.PUT('PurchaseId: '||l_id
-    ||Chr(10)||'CustomerId: '||l_cust_id
-    ||Chr(10)||'ShowDateTime: ' ||l_show_date_time
-    ||Chr(10)||'Hall-no: ' ||l_hall_no
-    ||Chr(10)||'Category: ' ||l_category
-    ||Chr(10)||'Format: ' ||l_format
-    ||Chr(10)||'Number-of-tickets: '||l_num_of_tickets
-    ||Chr(10)||'Total cost: '||l_total_cost
-    ||Chr(10)||'Purchse date:'||l_purchase_date
-    ||Chr(10)||'MovieId: '||l_movie_id
-    );
-  END LOOP;*/
+  seat_booking.book_seats( cust_data => 'auzchowdhury,auzchowdhury@Gmail.com,02557446802',
+              seats_list => 'LE36,UB15,LA51',
+              show_date => '31-JUL-2016',
+              show_time => '11: 40 AM',
+              hall_no => 6,
+              movie_name => 'The Godfather',
+              movie_format => 3,
+              p_new_purchase_id => l_id);
+  DBMS_OUTPUT.put_line(chr(10)||'New Purchase-Id: ' || l_id);
   EXCEPTION
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE(SQLERRM);
@@ -340,7 +327,7 @@ DECLARE
   p_seat_list VARCHAR2(300) := 'LA01,LA02,LA03,LA04';
 BEGIN
   seat_booking.are_seats_available(show_date => '31-JUL-16',
-                      show_time => '11: 40 AM',
+                      show_time => '11: 45 AM',
                       hall_no => 6,
                       seat_no_list => p_seat_list,
                       availability => l_avaibility,
